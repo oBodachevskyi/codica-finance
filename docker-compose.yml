@@ -1,0 +1,42 @@
+version: '3.0'
+
+services:
+  main:
+    container_name: main
+    build:
+      context: .
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+      - /app/node_modules
+    ports:
+      - 3000:3000
+      - 9229:9229
+    command: npm run start:dev
+    depends_on:
+      - postgres
+    networks:
+      - codica
+    restart: always
+  postgres:
+    container_name: postgres
+    image: postgres:latest
+    environment:
+         POSTGRES_DB: codica
+         POSTGRES_USER: postgres
+         POSTGRES_PASSWORD: 1111
+         PGDATA: /data/postgres
+    ports:
+      - 15432:5432
+    volumes:
+      - pgdata:/data/postgres
+    networks:
+      - codica
+    restart: always
+
+networks:
+   codica:
+      driver: bridge
+volumes:
+  pgdata:
